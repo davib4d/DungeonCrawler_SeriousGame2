@@ -1,0 +1,481 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <locale.h>
+#include <time.h>
+
+
+void terceiraFase(){
+   srand(time(NULL));
+
+    const int Altura3 = 40;
+    const int largura3 = 40;
+    int vidas = 0;
+    int botaoapertado = 0;
+    char mapa3[40][40] = {        
+        "****************************************",
+        "*&        #       > ###                *",
+        "*         #                            *",
+        "*         #####             #####      *",
+        "*         #                            *",
+        "*         #     ##                     *",
+        "*         #             #    #         *",
+        "*         ###                          *",
+        "*         #           #          ####  *",
+        "*         #      ##                    *",
+        "*         #                    ###     *",
+        "*         ####   #      ##             *",
+        "*            #                         *",
+        "*            #                         *",
+        "*            #########                 *",
+        "*       #   X        #                 *",
+        "*                    #                 *",
+        "*              O     #  #############  *",
+        "*        #           #                 *",
+        "*    #               #                 *",
+        "*                    #                 *",
+        "*         #          ###               *",
+        "*                                      *",
+        "*    #                                 *",
+        "*****#########################         *",
+        "*   *       #         #      #         *",
+        "*   *                 #   @  #         *",
+        "*   *      #          #      #         *",
+        "D   *                 #<     #         *",
+        "*****                 ########         *",
+        "*          #                           *",
+		"*                                      *",
+		"*                                      *",
+		"*          #                           *",
+		"*                                      *",
+		"*          #                           *",
+		"*                                      *",
+		"*          #                           *",
+		"****************************************", 
+    };
+
+    int i, j, personagemX = 1, personagemY = 1, chaveColetada = 0;
+    int monstroX = 12, monstroY = 15;
+    int monstro2X = 6, monstro2Y = 2;
+    char comando;
+    int monstroMov;
+
+    while (1) {
+        system("cls");
+        for (i = 0; i < Altura3; i++) {
+            for (j = 0; j < largura3; j++) {
+                printf("%c", mapa3[i][j]);
+            }
+            printf("\n");
+        }
+
+        comando = getch();
+        monstroMov = rand() % 4;
+
+        int novoX = personagemX, novoY = personagemY;
+        int novoMonstroX = monstroX, novoMonstroY = monstroY;
+        int novoMonstro2X = monstro2X, novoMonstro2Y = monstro2Y;
+
+        if (comando == 'w' && novoY > 0) novoY--;
+        else if (comando == 's' && novoY < Altura3 - 1) novoY++;
+        else if (comando == 'a' && novoX > 0) novoX--;
+        else if (comando == 'd' && novoX < largura3 - 1) novoX++;
+
+        if (mapa3[novoY][novoX] == '>') {
+            novoX = 24;
+            novoY = 28;
+        } 
+		if (mapa3[novoY][novoX] == '<') {
+            novoX = 17;
+            novoY = 2;
+        }
+
+        if (monstroMov == 0 && novoMonstroY > 0 && mapa3[novoMonstroY - 1][novoMonstroX] != '*') novoMonstroY--;
+        else if (monstroMov == 1 && novoMonstroY < Altura3 - 1 && mapa3[novoMonstroY + 1][novoMonstroX] != '*') novoMonstroY++;
+        else if (monstroMov == 2 && novoMonstroX > 0 && mapa3[novoMonstroY][novoMonstroX - 1] != '*') novoMonstroX--;
+        else if (monstroMov == 3 && novoMonstroX < largura3 - 1 && mapa3[novoMonstroY][novoMonstroX + 1] != '*') novoMonstroX++;
+
+		if (monstro2X < personagemX && mapa3[monstro2Y][monstro2X + 1] != '*') novoMonstro2X++;
+        else if (monstro2X > personagemX && mapa3[monstro2Y][monstro2X - 1] != '*') novoMonstro2X--;
+        else if (monstro2Y < personagemY && mapa3[monstro2Y + 1][monstro2X] != '*') novoMonstro2Y++;
+        else if (monstro2Y > personagemY && mapa3[monstro2Y - 1][monstro2X] != '*') novoMonstro2Y--;
+
+
+        if (mapa3[novoY][novoX] == 'X') {
+            novoX = 1;
+            novoY = 1;
+            vidas++;
+        }
+
+        if (mapa3[novoY][novoX] == '#') {
+            novoX = 1;
+            novoY = 1;
+            vidas++;
+        } else if (comando == 'i' && ((novoX > 0 && mapa3[novoY][novoX - 1] == '@') ||
+                  (novoX < largura3 - 1 && mapa3[novoY][novoX + 1] == '@') ||
+                  (novoY > 0 && mapa3[novoY - 1][novoX] == '@') ||
+                  (novoY < Altura3 - 1 && mapa3[novoY + 1][novoX] == '@'))) {
+            chaveColetada = 1;
+            mapa3[novoY][novoX - 1] = ' ';
+            mapa3[novoY][novoX + 1] = ' ';
+            mapa3[novoY - 1][novoX] = ' ';
+            mapa3[novoY + 1][novoX] = ' ';
+        } else if (comando == 'q'){
+        	main();
+		}
+
+        if (mapa3[novoY][novoX] == ' ' || (mapa3[novoY][novoX] == 'D' && chaveColetada)) {
+            mapa3[personagemY][personagemX] = ' ';
+            personagemX = novoX;
+            personagemY = novoY;
+            mapa3[personagemY][personagemX] = '&';
+            if (chaveColetada) {
+                mapa3[28][0] = '=';
+            }
+        } else if (chaveColetada && (mapa3[novoY][novoX] == '=')) {
+            system("cls");
+            printf("  __     ______  _    _    \n");
+		    printf("  \\ \\   / / __ \\| |  | | \n");
+		    printf("   \\ \\_/ / |  | | |  | |\n");
+		    printf("    \\   /| |  | | |  | |\n");
+		    printf("     | | | |__| | |__| |\n");
+		    printf("     |_|  \\____/ \\____/\n\n");
+		    printf(" __          _______ _   _  \n");
+		    printf(" \\ \\        / /_   _| \\ | |\n");
+		    printf("  \\ \\  /\\  / /  | | |  \\| |\n");
+		    printf("   \\ \\/  \\/ /   | | | . ` |\n");
+		    printf("    \\  /\\  /   _| |_| |\\  |\n");
+		    printf("     \\/  \\/   |_____|_| \\_|\n\n");
+		    printf("Pressione qualquer tecla para continuar...");
+            getch();
+            break;
+        }
+
+        if (mapa3[novoY][novoX] == 'O') {
+            mapa3[28][4] = ' ';
+            mapa3[personagemY][personagemX] = ' ';
+            personagemX = novoX;
+            personagemY = novoY;
+            mapa3[personagemY][personagemX] = '&';
+            botaoapertado = 1;
+        }
+
+        if ((mapa3[17][16] == '&' && botaoapertado == 1) || 
+            (mapa3[17][14] == '&' && botaoapertado == 1) || 
+            (mapa3[18][15] == '&' && botaoapertado == 1) || 
+            (mapa3[16][15] == '&' && botaoapertado == 1)) {
+             mapa3[17][15] = 'O';
+        }
+
+        if (vidas == 3) {
+            system("cls");
+            printf("++++++++++++++++++++++++++++++++++++\n¦¦¦¯¯¯¦¦+¦¦¦¯¯¯¦¦¦+¦¦¦¯¦_¦¯¦¦¦+¦¦¯¯¯\n¦¦++++¦¦+¦¦+++++¦¦+¦¦+++¦+++¦¦+¦¦+++\n¦¦+++___+¦¦_____¦¦+¦¦+++¯+++¦¦+¦¦¯¯¯\n¦¦++++¦¦+¦¦+++++¦¦+¦¦+++++++¦¦+¦¦+++\n¦¦¦___¦¦+¦¦+++++¦¦+¦¦+++++++¦¦+¦¦___\n++++++++++++++++++++++++++++++++++++\n¦¦¦¯¯¯¦¦¦+¯¦¦¦++¦¦¯+¦¦¯¯¯+¦¦¯¯¯¯¦¦_+\n¦¦+++++¦¦+++¦¦++¦¦++¦¦++++¦¦+++++¦¦+\n¦¦+++++¦¦+++¦¦++¦¦++¦¦¯¯¯+¦¦_____¯¯+\n¦¦+++++¦¦+++¦¦++¦¯++¦¦++++¦¦+++++¦¦+\n¦¦¦___¦¦¦+++-¯¦¯++-+¦¦___+¦¦+++++¦¦_\n++++++++++++++++++++++++++++++++++++\n++++++++¦¦+++++++++++++++¦¦+++++++++\n++++++¦¦¦¦_+++_______+++_¦¦¦¦+++++++\n+++++++++¯¯¦_¦¦¦¦¦¦¦¦¦_¦¯¯++++++++++\n+++++++++++¦¦¦¦¦¦¦¦¦¦¦¦¦++++++++++++\n+++++++++++¦¦¯¯¯¦¦¦¯¯¯¦¦++++++++++++\n+++++++++++¦¦+++¦¦¦+++¦¦++++++++++++\n+++++++++++¦¦¦¦¦¯_¯¦¦¦¦¦++++++++++++\n++++++++++++¦¦¦¦¦¦¦¦¦¦¦+++++++++++++\n++++++++___¦¦++¦¯¦¯¦++¦¦___+++++++++\n++++++++¯¯¦¦+++++++++++¦¦¯¯+++++++++\n++++++++++¯¯+++++++++++¯¯+++++++++++\n++++++++++++++++++++++++++++++++++++");
+            getch();
+            break;
+        }
+
+        if (mapa3[novoMonstroY][novoMonstroX] == ' ' || mapa3[novoMonstroY][novoMonstroX] == '&') {
+            mapa3[monstroY][monstroX] = ' ';
+            monstroX = novoMonstroX;
+            monstroY = novoMonstroY;
+            mapa3[monstroY][monstroX] = 'X';
+        }
+        if (mapa3[novoMonstro2Y][novoMonstro2X] == ' ' || mapa3[novoMonstro2Y][novoMonstro2X] == '&') {
+            if (mapa3[novoMonstro2Y][novoMonstro2X] == '&') {
+                novoX = 1;
+                novoY = 1;
+                vidas++;
+                chaveColetada = 0;
+                botaoapertado = 0;
+                mapa3[28][4] = 'O'; 
+                mapa3[monstro2Y][monstro2X] = 'V'; 
+            } else {
+                mapa3[monstro2Y][monstro2X] = ' ';
+                monstro2X = novoMonstro2X;
+                monstro2Y = novoMonstro2Y;
+                mapa3[monstro2Y][monstro2X] = 'V';
+            }
+		}
+    }
+}
+
+void segundaFase() {
+    srand(time(NULL));
+
+    const int Altura2 = 20;
+    const int largura2 = 20;
+    int vidas = 0;
+	int botaoapertado = 0;
+    char mapa2[20][20] = {
+        "********************",
+        "*&        #        *",
+        "*                  *",
+        "*                  *",
+        "*         @  #     *",
+        "*       #          *",
+        "*                  *",
+        "*              O   *",
+        "*                  *",
+        "*    #             *",
+        "*                  *",
+        "*         #        *",
+        "*                  *",
+        "*              X   *",
+        "*****   #          *",
+        "*   *       #      *",
+        "*   *              *",
+        "*   *      #       *",
+        "D   *              *",
+        "********************"
+    };
+
+    int i, j, personagemX = 1, personagemY = 1, chaveColetada = 0;
+    int monstroX = 15, monstroY = 13;
+    int monstroMov;
+    char comando;
+
+    while (1) {
+        system("cls");
+        for (i = 0; i < Altura2; i++) {
+            for (j = 0; j < largura2; j++) {
+                printf("%c", mapa2[i][j]);
+            }
+            printf("\n");
+        }
+
+        comando = getch();
+        monstroMov = rand() % 4;
+        
+        int novoX = personagemX, novoY = personagemY;
+        int novoMonstroX = monstroX, novoMonstroY = monstroY;
+	
+        if (comando == 'w' && novoY > 0) novoY--;
+        else if (comando == 's' && novoY < Altura2 - 1) novoY++;
+        else if (comando == 'a' && novoX > 0) novoX--;
+        else if (comando == 'd' && novoX < largura2 - 1) novoX++;
+		
+		if (monstroMov == 0 && novoMonstroY > 0 && mapa2[novoMonstroY - 1][novoMonstroX] != '*') novoMonstroY--;
+        else if (monstroMov == 1 && novoMonstroY < Altura2 - 1 && mapa2[novoMonstroY + 1][novoMonstroX] != '*') novoMonstroY++;
+        else if (monstroMov == 2 && novoMonstroX > 0 && mapa2[novoMonstroY][novoMonstroX - 1] != '*') novoMonstroX--;
+        else if (monstroMov == 3 && novoMonstroX < largura2 - 1 && mapa2[novoMonstroY][novoMonstroX + 1] != '*') novoMonstroX++;
+
+        if (mapa2[novoY][novoX] == '#'){
+            // Volta para a posição inicial se colidir com espinho
+            novoX = 1;
+            novoY = 1;
+            vidas++;
+        }
+		
+		if (mapa2[novoY][novoX] == 'X') {
+            novoX = 1;
+            novoY = 1;
+            vidas++;
+        }
+		
+		 else if (comando == 'i' && ((novoX > 0 && mapa2[novoY][novoX - 1] == '@') ||
+                  (novoX < largura2 - 1 && mapa2[novoY][novoX + 1] == '@') ||
+                  (novoY > 0 && mapa2[novoY - 1][novoX] == '@') ||
+                  (novoY < Altura2 - 1 && mapa2[novoY + 1][novoX] == '@'))) {
+            chaveColetada = 1;
+            mapa2[novoY][novoX - 1] = ' ';
+            mapa2[novoY][novoX + 1] = ' ';
+            mapa2[novoY - 1][novoX] = ' ';
+            mapa2[novoY + 1][novoX] = ' ';
+        } else if (comando == 'q'){
+        	main();
+		}
+
+        if (mapa2[novoY][novoX] == ' ' || (mapa2[novoY][novoX] == 'D' && chaveColetada)) {
+            mapa2[personagemY][personagemX] = ' ';
+            personagemX = novoX;
+            personagemY = novoY;
+            mapa2[personagemY][personagemX] = '&';
+            if (chaveColetada) {
+                mapa2[18][0] = '=';
+            }
+        } else if (chaveColetada && (mapa2[novoY][novoX] == '=')) {
+            system("cls");
+            printf("SEGUNDA FASE CONCLUÍDA! \n");
+            printf("Iniciando a Terceira fase...\n");
+            printf("Pressione qualquer tecla para continuar...");
+            getch();
+            break;
+        }
+        if (mapa2[novoY][novoX] == 'O'){
+        	mapa2[18][4] = ' ';
+        	mapa2[personagemY][personagemX] = ' ';
+        	personagemX = novoX;
+            personagemY = novoY;
+            mapa2[personagemY][personagemX] = '&';
+            botaoapertado = 1;
+			}
+			if(mapa2[7][14] == '&' && botaoapertado == 1 || mapa2[7][16] == '&' && botaoapertado == 1 || mapa2[8][14] == '&' && botaoapertado == 1 || mapa2[6][14] == '&' && botaoapertado == 1){
+				mapa2[7][15] = 'O';
+			}
+        if(vidas==3){
+        	system("cls");
+        	printf("++++++++++++++++++++++++++++++++++++\n¦¦¦¯¯¯¦¦+¦¦¦¯¯¯¦¦¦+¦¦¦¯¦_¦¯¦¦¦+¦¦¯¯¯\n¦¦++++¦¦+¦¦+++++¦¦+¦¦+++¦+++¦¦+¦¦+++\n¦¦+++___+¦¦_____¦¦+¦¦+++¯+++¦¦+¦¦¯¯¯\n¦¦++++¦¦+¦¦+++++¦¦+¦¦+++++++¦¦+¦¦+++\n¦¦¦___¦¦+¦¦+++++¦¦+¦¦+++++++¦¦+¦¦___\n++++++++++++++++++++++++++++++++++++\n¦¦¦¯¯¯¦¦¦+¯¦¦¦++¦¦¯+¦¦¯¯¯+¦¦¯¯¯¯¦¦_+\n¦¦+++++¦¦+++¦¦++¦¦++¦¦++++¦¦+++++¦¦+\n¦¦+++++¦¦+++¦¦++¦¦++¦¦¯¯¯+¦¦_____¯¯+\n¦¦+++++¦¦+++¦¦++¦¯++¦¦++++¦¦+++++¦¦+\n¦¦¦___¦¦¦+++-¯¦¯++-+¦¦___+¦¦+++++¦¦_\n++++++++++++++++++++++++++++++++++++\n++++++++¦¦+++++++++++++++¦¦+++++++++\n++++++¦¦¦¦_+++_______+++_¦¦¦¦+++++++\n+++++++++¯¯¦_¦¦¦¦¦¦¦¦¦_¦¯¯++++++++++\n+++++++++++¦¦¦¦¦¦¦¦¦¦¦¦¦++++++++++++\n+++++++++++¦¦¯¯¯¦¦¦¯¯¯¦¦++++++++++++\n+++++++++++¦¦+++¦¦¦+++¦¦++++++++++++\n+++++++++++¦¦¦¦¦¯_¯¦¦¦¦¦++++++++++++\n++++++++++++¦¦¦¦¦¦¦¦¦¦¦+++++++++++++\n++++++++___¦¦++¦¯¦¯¦++¦¦___+++++++++\n++++++++¯¯¦¦+++++++++++¦¦¯¯+++++++++\n++++++++++¯¯+++++++++++¯¯+++++++++++\n++++++++++++++++++++++++++++++++++++");
+        	getch();
+        	break;
+		}
+		 if (mapa2[novoMonstroY][novoMonstroX] == ' ' || mapa2[novoMonstroY][novoMonstroX] == '&') {
+            mapa2[monstroY][monstroX] = ' ';
+            monstroX = novoMonstroX;
+            monstroY = novoMonstroY;
+            mapa2[monstroY][monstroX] = 'X';
+        }
+    }
+    terceiraFase();
+}
+
+void primeiraFase(){
+	const int Altura = 10;
+    const int largura = 10;
+
+    char mapa[10][10] = {
+        "**********",
+        "*        *",
+        "* @  **  *",
+        "*     *  *",
+        "*     *  *",
+        "*    D*  *",
+        "*     *  *",
+        "*******  *",
+        "*&       *",
+        "**********"
+    };
+
+    int i, j, personagemX = 1, personagemY = 8, chaveColetada = 0;
+    char comando;
+
+	while (1) {
+                system("cls");
+                for (i = 0; i < Altura; i++) {
+                    for (j = 0; j < largura; j++) {
+                        printf("%c", mapa[i][j]);
+                    }
+                    printf("\n");
+                }
+
+                comando = getch();
+                int novoX = personagemX, novoY = personagemY;
+
+                if (comando == 'w' && novoY > 0) novoY--;
+                else if (comando == 's' && novoY < Altura - 1) novoY++;
+                else if (comando == 'a' && novoX > 0) novoX--;
+                else if (comando == 'd' && novoX < largura - 1) novoX++;
+
+                if (mapa[novoY][novoX] == '#') {
+                    // Volta para a posição inicial se colidir com espinho
+                    novoX = 1;
+                    novoY = 8;
+                } else if (comando == 'i' && ((novoX > 0 && mapa[novoY][novoX - 1] == '@') ||
+                         (novoX < largura - 1 && mapa[novoY][novoX + 1] == '@') ||
+                         (novoY > 0 && mapa[novoY - 1][novoX] == '@') ||
+                         (novoY < Altura - 1 && mapa[novoY + 1][novoX] == '@'))) {
+                    chaveColetada = 1;
+                    if(mapa[novoY][novoX - 1] == '*'){
+                        mapa[novoY][novoX + 1] = ' ';
+                        mapa[novoY - 1][novoX] = ' '; 
+                        mapa[novoY + 1][novoX] = ' ';
+						}
+						else{
+                        mapa[novoY][novoX - 1] = ' ';
+                        mapa[novoY][novoX + 1] = ' ';
+                        mapa[novoY - 1][novoX] = ' '; 
+                        mapa[novoY + 1][novoX] = ' ';
+                    }
+					mapa[0][2] = '*';
+                } else if (comando == 'q'){
+                	main();
+				}
+
+                if (mapa[novoY][novoX] == ' ' || (mapa[novoY][novoX] == 'D' && chaveColetada)) {
+                    mapa[personagemY][personagemX] = ' ';
+                    personagemX = novoX;
+                    personagemY = novoY;
+                    mapa[personagemY][personagemX] = '&';
+                    if (chaveColetada) {
+                        mapa[5][5] = '=';
+                    }
+                } else if (chaveColetada && (mapa[novoY][novoX] == '=')) {
+                    system("cls");
+                    printf("PRIMEIRA FASE CONCLUÍDA! \n");
+                    printf("Iniciando a Segunda fase...\n");
+                    printf("Pressione qualquer tecla para continuar...");
+                    getch();
+                    break;
+                }
+            }
+            segundaFase();
+}
+		
+int main() {
+    setlocale(LC_ALL, "Portuguese");
+    int escolha;
+	while (1) {
+        system("cls");
+        printf("### MENU PRINCIPAL ###\n");
+        printf("1. Jogar\n");
+        printf("2. Tutorial\n");
+        printf("3. Sair\n");
+        printf("4. Créditos\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &escolha);
+        fflush(stdin);
+
+        if (escolha == 1) {
+            primeiraFase();
+        } else if (escolha == 2) {
+            system("cls");
+            printf("##### MOVIMENTACAO #####\n");
+            printf("W: Mover para cima\n");
+            printf("A: Mover para a esquerda\n");
+            printf("S: Mover para baixo\n");
+            printf("D: Mover para a direita\n");
+            printf("I: Interagir com objetos\n");
+            printf("Q: Voltar para o Menu Principal\n");
+            printf("\n##### SIMBOLOS #####\n");
+            printf("&: O personagem principal (Nosso herói!)\n");
+            printf("X: O monstro nivel 1 (Não deixe ele te pegar!)\n");
+            printf("V: O monstro nivel 2 (Tenha cuidado redobrado...)\n");
+            printf("*: Paredes da dungeon\n");
+            printf("@: Chave que o jogador deve coletar para abrir a porta da dungeon\n");
+            printf("D: Porta fechada\n");
+            printf("=: Porta aberta pela chave\n");
+            printf("O: Botão interativo (Fique em cima dele para interagir)\n");
+            printf("#: Espinhos (Cuidado com eles, você só tem 3 vidas!)\n");
+            printf(">: Um teletransporte! Eles sempre vêm em pares, quando o jogador toca em um, ele será automaticamente transportado para o outro\n");
+            printf("\nPressione qualquer tecla para voltar ao menu principal.\n");
+            getchar();
+        }
+		  else if (escolha == 3) {
+            system("cls");
+            printf("Obrigado por jogar. Até logo!\n");
+            break;
+            }
+            
+          else if (escolha == 4) {
+          	system("cls");
+		    printf("****************************************\n");
+		    printf("*                                      *\n");
+		    printf("*             CREDITOS                 *\n");
+		    printf("*                                      *\n");
+		    printf("*          Davi Corrêa                 *\n");
+		    printf("*          Daniela Menezes             *\n");
+		    printf("*          Talyta Duarte               *\n");
+		    printf("*          Isadora Santos              *\n");
+		    printf("*                                      *\n");
+		    printf("*   Obrigado por jogar nosso jogo! <3  *\n");
+		    printf("*                                      *\n");
+		    printf("****************************************\n");
+		    printf("Pressione qualquer tecla para continuar...");
+		    getch();
+		  }
+         else {
+            printf("Opção inválida. Tente novamente.\n");
+            getchar();
+        }
+    }
+    return 0;
+}
